@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     # "auth",
+    "social_media",
     "account",
 ]
 
@@ -145,3 +146,6 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+GOOGLE_CLIENT_ID = env("Client_ID")
+GOOGLE_CLIENT_SECRETE = env("Client_Secret")
