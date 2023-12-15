@@ -149,3 +149,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 GOOGLE_CLIENT_ID = env("Client_ID")
 GOOGLE_CLIENT_SECRETE = env("Client_Secret")
+SOCIAL_AUTH_PASSWORD = env("SOCIAL_AUTH_PASSWORD")
