@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
+    "corsheaders",
     "rest_framework_simplejwt.token_blacklist",
     # "auth",
     "social_media",
@@ -81,6 +82,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

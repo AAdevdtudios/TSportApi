@@ -40,7 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     auth_provider = models.CharField(max_length=50, default=AUTH_PROVIDERS.get("email"))
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name", "last_name", "phone_number"]
+    REQUIRED_FIELDS = ["first_name", "last_name"]
     objects = UserManager()
 
     def __str__(self) -> str:

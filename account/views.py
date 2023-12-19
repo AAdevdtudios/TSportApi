@@ -91,6 +91,7 @@ class LoginUser(GenericAPIView):
             data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
+        print(serializer.data)
         return Response(serializer.data, status=serializer.data["status_code"])
 
 
@@ -137,3 +138,14 @@ class LogOutView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(status=204)
+
+
+class GetData(GenericAPIView):
+    def post(self, request):
+        data = request.data
+        print(data)
+        return Response(
+            {
+                "data": "hello world",
+            }
+        )

@@ -20,7 +20,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         fields = [
             "email",
             "first_name",
-            "phone_number",
             "last_name",
             "password",
             "password2",
@@ -40,7 +39,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             first_name=validated_data["first_name"],
             last_name=validated_data["last_name"],
             password=validated_data["password"],
-            phone_number=validated_data["phone_number"],
         )
 
         return user
@@ -85,6 +83,9 @@ class LoginSerializer(serializers.ModelSerializer):
 
         if email is None:
             return {"message": "Email cant be empty", "status_code": 400}
+
+        if password is None:
+            return {"message": "Password cant be empty", "status_code": 400}
 
         try:
             user = User.objects.get(email=email)

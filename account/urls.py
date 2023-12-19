@@ -8,9 +8,11 @@ from .views import (
     PasswordResetConfirmView,
     SetNewPasswordView,
     LogOutView,
+    GetData,
 )
 
 urlpatterns = [
+    path("data/", GetData.as_view(), name="GetData"),
     path("register/", RegisterUserView.as_view(), name="register"),
     path("login/", LoginUser.as_view(), name="login"),
     path("logout/", LogOutView.as_view(), name="logout"),
