@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.generics import GenericAPIView
 from .serializer import (
     UserRegisterSerializer,
@@ -8,6 +8,7 @@ from .serializer import (
     PasswordResetRequest,
     SetNewPasswordSerializer,
     LogOutSerializer,
+    UserDataSerializer,
 )
 from rest_framework.response import Response
 from rest_framework import status
@@ -49,11 +50,9 @@ class VerifyOtp(GenericAPIView):
             return Response(serializer.error_messages, status=400)
 
         info = serializer.data
-        print(info)
+        # print(info)
         valid = validate(
             otp=info["otp"],
-            secrete=info["secrete"],
-            expiring_date=info["date"],
             email=info["email"],
         )
         return Response(valid, status=valid["status"])
@@ -91,7 +90,7 @@ class LoginUser(GenericAPIView):
             data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
-        print(serializer.data)
+        # print(serializer.data)
         return Response(serializer.data, status=serializer.data["status_code"])
 
 
@@ -141,11 +140,12 @@ class LogOutView(GenericAPIView):
 
 
 class GetData(GenericAPIView):
-    def post(self, request):
-        data = request.data
-        print(data)
-        return Response(
-            {
-                "data": "hello world",
-            }
-        )
+    queryset = User.objects.all()
+    serializer_class = UserDataSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = get_object_or_404(User, email=request.user)
+        serializer = self.serializer_class(instance=user)
+
+        return Response(data=serializer.data, status=200)

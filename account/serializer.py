@@ -50,9 +50,7 @@ class ResendOneTimePasswordRequest(serializers.Serializer):
 
 class ValidateOneTimePasswordRequest(serializers.Serializer):
     email = serializers.EmailField(max_length=256)
-    secrete = serializers.CharField(max_length=256)
     otp = serializers.CharField(max_length=10)
-    date = serializers.CharField(max_length=256)
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -63,6 +61,9 @@ class LoginSerializer(serializers.ModelSerializer):
     refresh_token = serializers.CharField(max_length=256, read_only=True)
     status_code = serializers.IntegerField(read_only=True)
     message = serializers.CharField(max_length=256, read_only=True)
+    is_subscribed = serializers.BooleanField(read_only=True)
+    is_verified = serializers.BooleanField(read_only=True)
+    subscriber_number = serializers.CharField(max_length=256, read_only=True)
 
     class Meta:
         model = User
@@ -73,6 +74,9 @@ class LoginSerializer(serializers.ModelSerializer):
             "access_token",
             "refresh_token",
             "status_code",
+            "is_subscribed",
+            "is_verified",
+            "subscriber_number",
             "message",
         ]
 
@@ -102,6 +106,9 @@ class LoginSerializer(serializers.ModelSerializer):
             return {
                 "email": user.email,
                 "full_name": user.get_full_name,
+                "is_subscribed": user.is_subscribed,
+                "subscriber_number": user.subscriber_number,
+                "is_verified": user.is_verified,
                 "access_token": user_tokens.get("access"),
                 "refresh_token": user_tokens.get("refresh"),
                 "status_code": 200,
@@ -178,3 +185,21 @@ class LogOutSerializer(serializers.Serializer):
             token.blacklist()
         except TokenError:
             return self.fail("Bad token")
+
+
+class UserDataSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(max_length=256)
+    get_full_name = serializers.ReadOnlyField()
+    subscriber_number = serializers.CharField(max_length=256, read_only=True)
+    is_subscribed = serializers.BooleanField(read_only=True)
+    is_verified = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            "email",
+            "get_full_name",
+            "subscriber_number",
+            "is_subscribed",
+            "is_verified",
+        ]

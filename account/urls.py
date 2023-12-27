@@ -10,6 +10,7 @@ from .views import (
     LogOutView,
     GetData,
 )
+from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
     path("data/", GetData.as_view(), name="GetData"),
@@ -26,5 +27,6 @@ urlpatterns = [
         name="password-reset-confirm",
     ),
     path("set-new-password/", SetNewPasswordView.as_view(), name="set-new-password"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="refresh-token"),
     # path("otp/<str:id>", ShowOTP.as_view(), name="OTP"),
 ]

@@ -55,10 +55,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         return {"refresh": str(refresh), "access": str(refresh.access_token)}
 
 
-# class OneTimePassword(models.Model):
-#     user = models.OneToOneRel(User, on_delete=models.CASCADE)
-#     code = models.CharField(max_length=6, unique=True)
-#     date = models.DateTimeField(auto_now=True)
+class OneTimePassword(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+    )
+    code = models.CharField(max_length=6, unique=True)
+    date = models.CharField(max_length=256)
+    secrete = models.CharField(max_length=256)
 
-#     def __str__(self) -> str:
-#         return f"{self.user.first_name} {self.user.last_name}- pass code"
+    def __str__(self) -> str:
+        return f"{self.user.first_name} {self.user.last_name}-> pass code"
