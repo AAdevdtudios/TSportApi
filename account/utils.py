@@ -1,11 +1,32 @@
 import pyotp
 from datetime import datetime, timedelta
+from django.template.loader import render_to_string
+
 
 # import resend
 # import os
 
 # resend.api_key = os.environ["RESEND_KEY"]
 from .models import OneTimePassword, User
+
+confirm_user_email = """
+Hi [name],
+
+Thanks for getting started with our [customer portal]!
+
+We need a little more information to complete your registration, including a confirmation of your email address.
+
+Click below to confirm your email address:
+
+[link]
+
+If you have problems, please paste the above URL into your web browser.
+"""
+
+
+def send_verification_email(email: str, url: str):
+    html_content = render_to_string("verification-email.html", {"url": url})
+    print(html_content)
 
 
 def send_otp(email: str):
@@ -17,16 +38,10 @@ def send_otp(email: str):
     try:
         user = User.objects.get(email=email)
         get_otp = OneTimePassword.objects.get(user=user)
-        if get_otp is not None:
-            get_otp.date = str(valid_date)
-            get_otp.code = otp
-            get_otp.secrete = totp.secret
-            get_otp.save()
-        else:
-            OneTimePassword.objects.create(
-                user=user, code=otp, date=valid_date, secrete=totp.secret
-            )
-        print(f"pass a url for the user {totp.secret}")
+        get_otp.date = str(valid_date)
+        get_otp.code = otp
+        get_otp.secrete = totp.secret
+        get_otp.save()
         # params = {
         #     "from": "Acme <onboarding@resend.dev>",
         #     "to": f"{email}",
@@ -36,13 +51,21 @@ def send_otp(email: str):
         # email = resend.Emails.send(params)
 
         return {
+            "message": "OTP Sent to email",
+            "status": 200,
+        }
+    except User.DoesNotExist:
+        return {"message": "User doesn't exist", "status": 400}
+    except OneTimePassword.DoesNotExist:
+        OneTimePassword.objects.create(
+            user=user, code=otp, date=str(valid_date), secrete=totp.secret
+        )
+        return {
             "otp": otp,
             "Secret": totp.secret,
             "valid_date": str(valid_date),
             "status": 200,
         }
-    except User.DoesNotExist:
-        return {"error": "User doesn't exist", "status": 400}
 
 
 def validate(otp: str, email: str):
@@ -53,7 +76,7 @@ def validate(otp: str, email: str):
 
         # Is User verified
         if user.is_verified:
-            return {"error": "User is already valid", "status": 400}
+            return {"message": "User is already valid", "status": 400}
 
         # Does the user email match the email otp
         if user.email != get_user_otp_details.user.email:
@@ -70,11 +93,12 @@ def validate(otp: str, email: str):
             return {"message": "Invalid Otp or has expired", "status": 400}
 
         user.is_verified = True
+        user.is_active = True
         user.save()
 
         return {"message": "User is equal", "status": 200}
 
     except User.DoesNotExist:
-        return {"error": "User doesn't exist", "status": 400}
+        return {"message": "User doesn't exist", "status": 400}
     except OneTimePassword.DoesNotExist:
-        return {"error": "OTP doesn't exist", "status": 400}
+        return {"message": "OTP doesn't exist", "status": 400}

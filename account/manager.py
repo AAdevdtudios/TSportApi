@@ -15,7 +15,7 @@ class UserManager(BaseUserManager):
             return ValueError(_("Please enter a valid email address"))
 
     def generate_random(self):
-        random_number = randrange(100000, 999999)
+        random_number = randrange(1000000000, 9999999999)
         # check_unique = User.objects.filter(subscriber_number=random_number)
 
         return random_number

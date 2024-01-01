@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.generics import GenericAPIView
 from .serializer import (
+    SendVerifyToken,
     UserRegisterSerializer,
     ResendOneTimePasswordRequest,
     ValidateOneTimePasswordRequest,
@@ -9,6 +10,7 @@ from .serializer import (
     SetNewPasswordSerializer,
     LogOutSerializer,
     UserDataSerializer,
+    ErrorValidation,
 )
 from rest_framework.response import Response
 from rest_framework import status
@@ -23,6 +25,7 @@ from .models import User
 # Create your views here.
 
 
+# Send OTP
 class ResendOtp(GenericAPIView):
     serializer_class = ResendOneTimePasswordRequest
 
@@ -68,18 +71,59 @@ class RegisterUserView(GenericAPIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             user = serializer.data
-            sentInfo = send_otp(user["email"])
+            send_otp(user["email"])
             first_name = user["first_name"]
 
             # Send email function
             return Response(
                 {
-                    "data": user | sentInfo,
+                    # "data": user,
                     "message": f"Hi {first_name} thanks for signing up a pass code has been sent to your email",
                 },
                 status=200,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# View to verify user
+class VerifyUserToken(GenericAPIView):
+    serializer_class = SendVerifyToken
+
+    def post(self, request):
+        serializer = self.serializer_class(
+            data=request.data, context={"request": request}
+        )
+        try:
+            serializer.is_valid(raise_exception=True)
+            return Response({"message": serializer.data}, status=200)
+        except ErrorValidation as e:
+            return Response({"message": str(e)}, status=e.status_code)
+
+    def get(self, request, uid, token):
+        try:
+            user_id = smart_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(id=user_id)
+            if user.is_verified:
+                return Response({"message": "User is already verified"}, status=400)
+            if not PasswordResetTokenGenerator().check_token(user, token):
+                return Response(
+                    {"message": "Token is invalid or as expired"}, status=400
+                )
+            user.is_verified = True
+            user.is_active = True
+            user_tokens = user.tokens()
+            user.save()
+            return Response(
+                {
+                    "message": {
+                        "access_token": user_tokens.get("access"),
+                        "refresh_token": user_tokens.get("refresh"),
+                    }
+                },
+                status=200,
+            )
+        except DjangoUnicodeDecodeError:
+            Response({"message": "Token is invalid or as expired"}, status=400)
 
 
 class LoginUser(GenericAPIView):

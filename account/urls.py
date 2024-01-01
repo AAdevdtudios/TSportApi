@@ -9,6 +9,7 @@ from .views import (
     SetNewPasswordView,
     LogOutView,
     GetData,
+    VerifyUserToken,
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -18,6 +19,9 @@ urlpatterns = [
     path("login/", LoginUser.as_view(), name="login"),
     path("logout/", LogOutView.as_view(), name="logout"),
     # path("reset-password/", PasswordResetView.as_view(), name="reset-password"),
+    path("verify/", VerifyUserToken.as_view(), name="Verify-User"),
+    path("verify/<uid>/<token>", VerifyUserToken.as_view(), name="Verify-User"),
+    # Previous method of what i did
     path("resendOtp/", ResendOtp.as_view(), name="Send-OTP"),
     path("validateOtp/", VerifyOtp.as_view(), name="Verify-OTP"),
     path("password-reset/", PasswordResetView.as_view(), name="password-reset"),
