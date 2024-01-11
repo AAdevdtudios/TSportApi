@@ -32,7 +32,7 @@ SECRET_KEY = env("SECRETE_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("Debug")
 
-ALLOWED_HOSTS = [".onrender.com"]
+ALLOWED_HOSTS = env.list("ALLOWED_HOST")
 
 
 # Application definition
@@ -86,9 +86,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+CORS_ALLOW_ALL_ORIGINS = True
+
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
