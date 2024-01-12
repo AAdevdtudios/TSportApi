@@ -32,7 +32,7 @@ SECRET_KEY = env("SECRETE_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("Debug")
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOST")
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
