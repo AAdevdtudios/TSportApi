@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     # "auth",
     "social_media",
     "account",
+    "subscription",
 ]
 
 MIDDLEWARE = [
@@ -108,7 +109,7 @@ REST_FRAMEWORK = {
     )
 }
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
@@ -160,3 +161,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 GOOGLE_CLIENT_ID = env("Client_ID")
 GOOGLE_CLIENT_SECRETE = env("Client_Secret")
 SOCIAL_AUTH_PASSWORD = env("SOCIAL_AUTH_PASSWORD")
+PAYSTACKSCKEY = env("PAYSTACKSCKEY")
+PAYSTACKPKKEY = env("PAYSTACKPKKEY")

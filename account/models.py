@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 from .manager import UserManager
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.utils import timezone
 
 
 AUTH_PROVIDERS = {
@@ -53,6 +54,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     def tokens(self):
         refresh = RefreshToken.for_user(self)
         return {"refresh": str(refresh), "access": str(refresh.access_token)}
+
+    def is_subscribed_change(self):
+        if self.is_subscribed == False:
+            return False
+        if self.nextSubscriptionDate < timezone.now().date():
+            self.is_subscribed = False
+            return False
+        self.is_subscribed = True
+        return True
 
 
 class OneTimePassword(models.Model):
