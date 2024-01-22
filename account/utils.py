@@ -33,7 +33,7 @@ def send_otp(email: str):
     totp = pyotp.TOTP(pyotp.random_base32(), interval=1800)
     otp = totp.now()
     valid_date = datetime.now() + timedelta(minutes=30)
-    # print(f"{otp} + {valid_date}")
+    print(f"{otp} + {valid_date}")
 
     try:
         user = User.objects.get(email=email)
@@ -49,6 +49,7 @@ def send_otp(email: str):
         #     "html": f"<strong>Your {otp} is</strong>",
         # }
         # email = resend.Emails.send(params)
+        print(get_otp.code)
 
         return {
             "message": "OTP Sent to email",
@@ -96,7 +97,15 @@ def validate(otp: str, email: str):
         user.is_active = True
         user.save()
 
-        return {"message": "User is equal", "status": 200}
+        user_tokens = user.tokens()
+
+        return {
+            "message": {
+                "access_token": user_tokens.get("access"),
+                "refresh_token": user_tokens.get("refresh"),
+            },
+            "status": 200,
+        }
 
     except User.DoesNotExist:
         return {"message": "User doesn't exist", "status": 400}

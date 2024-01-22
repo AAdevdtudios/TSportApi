@@ -11,6 +11,7 @@ from django.urls import reverse
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from .utils import send_verification_email
 from django.utils.translation import gettext_lazy as _
+from logics.utils import CheckNextDueDate
 
 
 class ErrorValidation(Exception):
@@ -22,6 +23,7 @@ class ErrorValidation(Exception):
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
     password2 = serializers.CharField(max_length=68, min_length=6, write_only=True)
+    isWebsite = serializers.BooleanField(default=False)
 
     class Meta:
         model = User
@@ -31,6 +33,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             "last_name",
             "password",
             "password2",
+            "isWebsite",
         ]
 
     def validate(self, attrs):
@@ -91,6 +94,12 @@ class LoginSerializer(serializers.ModelSerializer):
                 raise AuthenticationFailed(
                     "Invalid credentials or your account hasn't been activated"
                 )
+            code = User.objects.get(email=email)
+            if code.subscriptionCode:
+                data = CheckNextDueDate(code.subscriptionCode)
+                code.is_subscribed = data["is_subscribed"]
+                code.email_token = data["email_token"]
+                code.save()
             user_tokens = user.tokens()
             return {
                 "access_token": user_tokens.get("access"),
@@ -214,4 +223,5 @@ class UserDataSerializer(serializers.ModelSerializer):
             "subscriber_number",
             "is_subscribed",
             "is_verified",
+            "phone_number",
         ]

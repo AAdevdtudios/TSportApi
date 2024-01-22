@@ -33,6 +33,12 @@ SECRET_KEY = env("SECRETE_KEY")
 DEBUG = env("Debug")
 
 ALLOWED_HOSTS = ["*"]
+# CSRF_TRUSTED_ORIGINS = [
+#     "https://*.onrender.com",
+#     "http://*.127.0.0.1",
+#     "htttp://*.3281-102-89-33-217.ngrok-free.app",
+#     "https://3281-102-89-33-217.ngrok-free.app/",
+# ]
 
 
 # Application definition
@@ -52,6 +58,7 @@ INSTALLED_APPS = [
     "social_media",
     "account",
     "subscription",
+    "api_vtu",
 ]
 
 MIDDLEWARE = [
@@ -84,6 +91,9 @@ TEMPLATES = [
         },
     },
 ]
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = True
 
 WSGI_APPLICATION = "core.wsgi.application"
 
@@ -163,3 +173,4 @@ GOOGLE_CLIENT_SECRETE = env("Client_Secret")
 SOCIAL_AUTH_PASSWORD = env("SOCIAL_AUTH_PASSWORD")
 PAYSTACKSCKEY = env("PAYSTACKSCKEY")
 PAYSTACKPKKEY = env("PAYSTACKPKKEY")
+WEBSITEURL = env("WEBSITEURL")

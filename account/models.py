@@ -21,7 +21,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     first_name = models.CharField(max_length=255, verbose_name=_("First Name"))
     last_name = models.CharField(max_length=255, verbose_name=_("Last Name"))
-    phone_number = models.CharField(max_length=255, verbose_name=_("Phone Number"))
+    phone_number = models.CharField(
+        max_length=255, verbose_name=_("Phone Number"), blank=True, null=True
+    )
     subscriber_number = models.CharField(
         max_length=255, unique=True, verbose_name=_("Subscriber Number")
     )
@@ -32,7 +34,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     nextSubscriptionDate = models.DateTimeField(
         auto_now=True, verbose_name=_("Next Date")
     )
+    subscriptionCode = models.CharField(
+        max_length=256, verbose_name=_("Subscription Code"), default="", blank=True
+    )
     is_staff = models.BooleanField(default=False)
+    email_token = models.CharField(blank=True, null=True, max_length=250)
     is_superuser = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)

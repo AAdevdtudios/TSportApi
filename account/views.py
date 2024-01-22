@@ -69,9 +69,21 @@ class RegisterUserView(GenericAPIView):
         serializer = self.serializer_class(data=user_data)
 
         if serializer.is_valid(raise_exception=True):
+            # This would be sent if it was Website
             serializer.save()
             user = serializer.data
-            send_otp(user["email"])
+            if serializer.validated_data["isWebsite"]:
+                print("Got here first")
+                data = {"email": user["email"]}
+                send_verification = SendVerifyToken(
+                    data=data, context={"request": request}
+                )
+                send_verification.is_valid(raise_exception=True)
+            else:
+                # This would be sent if it is mobile
+                print("Diamond")
+                send_otp(user["email"])
+
             first_name = user["first_name"]
 
             # Send email function
