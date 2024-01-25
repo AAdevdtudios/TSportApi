@@ -13,6 +13,11 @@ paystack_secret_key = settings.PAYSTACKSCKEY
 paystack = Paystack(secret_key=paystack_secret_key)
 
 
+def CheckReference(ref: str):
+    data = paystack.subscription.list()
+    return data
+
+
 def CreatePlan(interval: str, name: str, amount: int):
     data = {"name": name, "interval": interval, "amount": amount}
     res = paystack.plan.create(data)
@@ -43,6 +48,7 @@ def SubscribeUser(email: str, planName: str):
 # invoice.create invoice.payment_failed invoice.update subscription.create subscription.disable subscription.not_renew charge.success
 def EventActions(event, data):
     if event == "subscription.create":
+        print(data)
         _subscriptionService(data=data)
         return "Subscription create"
     if event == "subscription.disable":

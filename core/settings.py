@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "account",
     "subscription",
     "api_vtu",
+    "sport_view",
 ]
 
 MIDDLEWARE = [
