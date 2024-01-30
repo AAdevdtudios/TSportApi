@@ -4,13 +4,29 @@ from .serializer import SubscribePlan, WebhookResponse
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .services import SubscribeUser, EventActions, CheckReference
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 @api_view(["POST"])
 def TestDataUserRes(request):
-    call = request.data
-    res = CheckReference(call["ref"])
-    return Response({"message": res}, status=200)
+    # call = request.data
+    # res = CheckReference(call["ref"])
+    # return Response({"message": res}, status=200)
+    data = request.data
+    message = data["message"]
+    email = data["email"]
+    send_mail(
+        "Test info",
+        message,
+        settings.EMAIL_HOST_USER,
+        [email],
+    )
+    return Response(
+        {
+            "message": "Message sent successfully",
+        },
+    )
 
 
 # Create your views here.

@@ -54,12 +54,14 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "corsheaders",
     "rest_framework_simplejwt.token_blacklist",
+    "background_task",
     # "auth",
     "social_media",
     "account",
     "subscription",
     "api_vtu",
     "sport_view",
+    "notifications",
 ]
 
 MIDDLEWARE = [
@@ -175,3 +177,11 @@ SOCIAL_AUTH_PASSWORD = env("SOCIAL_AUTH_PASSWORD")
 PAYSTACKSCKEY = env("PAYSTACKSCKEY")
 PAYSTACKPKKEY = env("PAYSTACKPKKEY")
 WEBSITEURL = env("WEBSITEURL")
+
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_HOST_USER = env("EMAIL_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_PASSWORD")
+EMAIL_PORT = env("EMAIL_PORT")
