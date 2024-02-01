@@ -108,11 +108,15 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("NAME"),
+        "USER": env("USER"),
+        "PASSWORD": env("PASSWORD"),
+        "HOST": env("HOST"),
+        "PORT": env("PORT"),
     }
 }
-DATABASES["default"] = dj_database_url.parse(env("DBPOSTGRES"))
+# DATABASES["default"] = dj_database_url.parse(env("DBPOSTGRES"))
 
 AUTH_USER_MODEL = "account.User"
 
