@@ -164,7 +164,6 @@ class PasswordResetRequest(serializers.Serializer):
             print(absLink)
             send_verification_email(
                 email=email,
-                url=absLink,
                 subject="Password Reset",
                 render="password-reset.html",
                 data={
