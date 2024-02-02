@@ -1,6 +1,7 @@
 import pyotp
 from datetime import datetime, timedelta
 from django.template.loader import render_to_string
+from logics.utils import send_email
 
 
 # import resend
@@ -24,8 +25,14 @@ If you have problems, please paste the above URL into your web browser.
 """
 
 
-def send_verification_email(email: str, url: str):
-    html_content = render_to_string("verification-email.html", {"url": url})
+def send_verification_email(
+    email: str,
+    data: dict,
+    subject: str = "Verify Account",
+    render: str = "verification-email.html",
+):
+    html_content = render_to_string(render, data)
+    send_email(email=email, subject=subject, html=html_content)
     print(html_content)
 
 
@@ -42,6 +49,14 @@ def send_otp(email: str):
         get_otp.code = otp
         get_otp.secrete = totp.secret
         get_otp.save()
+        send_verification_email(
+            email=email,
+            data={
+                "otp": otp,
+            },
+            subject="One Time Password",
+            render="otp.html",
+        )
         # params = {
         #     "from": "Acme <onboarding@resend.dev>",
         #     "to": f"{email}",

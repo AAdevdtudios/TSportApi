@@ -2,9 +2,13 @@ from paystackapi.paystack import Paystack
 from datetime import datetime, date
 from django.conf import settings
 import requests
+import resend
+
 
 paystack_secret_key = settings.PAYSTACKSCKEY
+resendKey = settings.RESEND_KEY
 paystack = Paystack(secret_key=paystack_secret_key)
+resend.api_key = "re_2RTqXv6k_EcECn1Cuur6VY6hCvKxyeWcS"
 
 
 def CreatePlan(interval: str, name: str, amount: int):
@@ -36,3 +40,37 @@ def CheckNextDueDate(code: str):
     }
 
     return response
+
+
+def send_email(
+    email: str,
+    subject: str,
+    html: str,
+    # emailId: int | None,
+) -> bool:
+    params = {
+        "from": "info <info@tscore.ng>",
+        "to": [email],
+        "subject": subject,
+        "html": html,
+    }
+    resend.Emails.send(params)
+
+    # res = requests.post(
+    #     "https://api.resend.com/emails",
+    #     headers={
+    #         "Authorization": "Bearer " + resendKey,
+    #         "Content-Type": "application/json",
+    #     },
+    #     data={
+    #         "from": "info <info@tscore.ng>",
+    #         "to": [email],
+    #         "subject": subject,
+    #         "text": html,
+    #     },
+    # )
+    # print(res)
+    # if res.status_code != 200:
+    #     return False
+
+    # return True

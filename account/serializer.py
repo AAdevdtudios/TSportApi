@@ -12,6 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from .utils import send_verification_email
 from django.utils.translation import gettext_lazy as _
 from logics.utils import CheckNextDueDate
+from django.conf import settings
 
 
 class ErrorValidation(Exception):
@@ -128,8 +129,12 @@ class SendVerifyToken(serializers.Serializer):
             token = PasswordResetTokenGenerator().make_token(user)
             request = self.context.get("request")
             site_domain = get_current_site(request=request).domain
-            absLink = f"http://{site_domain}/api/v1/auth/verify/{uid}/{token}"
-            send_verification_email(user.email, absLink)
+            # absLink = f"http://{site_domain}/api/v1/auth/verify/{uid}/{token}"
+            absLink = f"{settings.WEBSITEURL}/verifyuser/{uid}/{token}"
+            data = {
+                "url": absLink,
+            }
+            send_verification_email(email=user.email, data=data)
             print(absLink)
 
             return super().validate(attrs)
@@ -150,12 +155,22 @@ class PasswordResetRequest(serializers.Serializer):
             uid64 = urlsafe_base64_encode(smart_bytes(user.id))
             token = PasswordResetTokenGenerator().make_token(user)
             request = self.context.get("request")
-            site_domain = get_current_site(request=request).domain
-            retrieve_lik = reverse(
-                "password-reset-confirm", kwargs={"uidb64": uid64, "token": token}
-            )
-            absLink = f"http://{site_domain}{retrieve_lik}"
+            # site_domain = get_current_site(request=request).domain
+            # retrieve_lik = reverse(
+            #     "password-reset-confirm", kwargs={"uidb64": uid64, "token": token}
+            # )
+            # absLink = f"http://{site_domain}{retrieve_lik}"
+            absLink = f"{settings.WEBSITEURL}/password-reset/{uid64}/{token}"
             print(absLink)
+            send_verification_email(
+                email=email,
+                url=absLink,
+                subject="Password Reset",
+                render="password-reset.html",
+                data={
+                    "url": absLink,
+                },
+            )
             return super().validate(attrs)
         else:
             raise serializers.ValidationError("User doesn't exist")

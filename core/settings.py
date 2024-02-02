@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-import dj_database_url
 import os
 import environ
 from pathlib import Path
@@ -31,6 +30,7 @@ SECRET_KEY = env("SECRETE_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("Debug")
+
 
 ALLOWED_HOSTS = ["*"]
 # CSRF_TRUSTED_ORIGINS = [
@@ -189,3 +189,6 @@ EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_HOST_USER = env("EMAIL_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_PASSWORD")
 EMAIL_PORT = env("EMAIL_PORT")
+
+# Resend Key
+RESEND_KEY = env("RESEND_KEY")
