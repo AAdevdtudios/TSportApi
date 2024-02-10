@@ -25,6 +25,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
     password2 = serializers.CharField(max_length=68, min_length=6, write_only=True)
     isWebsite = serializers.BooleanField(default=False)
+    notification_id = serializers.CharField(default="")
 
     class Meta:
         model = User
@@ -35,6 +36,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             "password",
             "password2",
             "isWebsite",
+            "notification_id",
         ]
 
     def validate(self, attrs):
@@ -51,6 +53,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             first_name=validated_data["first_name"],
             last_name=validated_data["last_name"],
             password=validated_data["password"],
+            notification_id=validated_data["notification_id"],
         )
 
         return user
@@ -72,6 +75,7 @@ class LoginSerializer(serializers.ModelSerializer):
     refresh_token = serializers.CharField(max_length=256, read_only=True)
     status_code = serializers.IntegerField(read_only=True)
     message = serializers.CharField(max_length=256, read_only=True)
+    notification_id = serializers.CharField(max_length=256, default=None)
 
     class Meta:
         model = User
@@ -82,12 +86,14 @@ class LoginSerializer(serializers.ModelSerializer):
             "refresh_token",
             "status_code",
             "message",
+            "notification_id",
         ]
 
     def validate(self, attrs):
         request = self.context.get("request")
         email = attrs.get("email")
         password = attrs.get("password")
+        notification_id = attrs.get("notification_id")
 
         try:
             user = authenticate(request=request, email=email, password=password)
@@ -96,6 +102,9 @@ class LoginSerializer(serializers.ModelSerializer):
                     "Invalid credentials or your account hasn't been activated"
                 )
             code = User.objects.get(email=email)
+            if notification_id is not None:
+                code.notification_id = notification_id
+                code.save()
             if code.subscriptionCode:
                 data = CheckNextDueDate(code.subscriptionCode)
                 code.is_subscribed = data["is_subscribed"]

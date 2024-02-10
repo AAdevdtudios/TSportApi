@@ -56,21 +56,11 @@ def send_email(
     }
     resend.Emails.send(params)
 
-    # res = requests.post(
-    #     "https://api.resend.com/emails",
-    #     headers={
-    #         "Authorization": "Bearer " + resendKey,
-    #         "Content-Type": "application/json",
-    #     },
-    #     data={
-    #         "from": "info <info@tscore.ng>",
-    #         "to": [email],
-    #         "subject": subject,
-    #         "text": html,
-    #     },
-    # )
-    # print(res)
-    # if res.status_code != 200:
-    #     return False
 
-    # return True
+def get_filename(filename, request):
+    return filename.upper()
+
+
+def send_notification(id, message, content):
+    headers = {"Content-type": ""}
+    print(content, message)

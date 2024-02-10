@@ -1,4 +1,4 @@
-{% extends "admin/base_site.html" %} {% block content %}
+{% extends "admin/base_site.html" %} {% load static%} {% block content %}
 
 <form method="POST">
   <ul class="list-group list-group-horizontal">
@@ -8,7 +8,7 @@
   </ul>
   {% csrf_token %}
   <div>
-    {{form.as_p}}
+    {{form|crispy}} {{ block.super }}
 
     <input type="hidden" name="action" value="notification" />
     <input type="submit" name="apply" value="Send Notification" />

@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
+
 import os
 import environ
 from pathlib import Path
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework_simplejwt.token_blacklist",
     # "background_task",
+    "ckeditor",
     # "auth",
     "social_media",
     "account",
@@ -95,8 +97,8 @@ TEMPLATES = [
     },
 ]
 
-# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-# SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = True
 
 WSGI_APPLICATION = "core.wsgi.application"
 
@@ -161,6 +163,8 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
 
 # Static files (CSS, JavaScript, Images)

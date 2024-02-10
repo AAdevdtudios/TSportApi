@@ -1,18 +1,19 @@
 from django.contrib import admin
+from django.http.request import HttpRequest
+from django.template.response import TemplateResponse
+from django.urls.resolvers import URLPattern
 from .models import User, OneTimePassword
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from notifications.forms import NotificationForm
 from notifications.models import Notifications
 from datetime import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.urls import path
+from django.contrib.admin import helpers
+from logics.utils import send_notification, send_email
 
 # Register your models here.
-
-
-class NotificationInline(admin.TabularInline):
-    model = Notifications
-    extra = 1
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -27,34 +28,34 @@ class UserAdmin(admin.ModelAdmin):
     ]
     list_filter = ["is_verified", "is_subscribed"]
     search_fields = ["first_name", "last_name", "email"]
-    inlines = [NotificationInline]
+    actions = ["send_not"]
 
-    actions = ["send_notifications", "redirect_users"]
+    # change_list_template = "admin/user_details.html"
+    def send_not(self, request, queryset):
+        notification = get_object_or_404(Notifications, pk=request.POST["notification"])
+        emails = [
+            send_email(
+                user.email, notification.title, f"<html>{notification.content}</html>"
+            )
+            for user in queryset
+        ]
+        notification_id = [
+            user.notification_id for user in queryset if user.notification_id
+        ]
 
-    def redirect_users(self, request, queryset):
-        selected = queryset.values_list("id", flat=True)
-        selected_ids = ",".join(str(id) for id in selected)
-        custom_url = reverse("custom_view") + "?ids=" + selected_ids
-        return HttpResponseRedirect(custom_url)
+        return HttpResponseRedirect("../user/")
+
+    def changelist_view(self, request, extra_context=None):
+        self.change_list_template = "admin/user_details.html"
+        extra_context = extra_context or {}
+        extra_context["notifications"] = Notifications.objects.all()
+        return super().changelist_view(request, extra_context)
 
     def date_joined(self, obj):
         timestamp_str = str(obj.dateJoined)
         timestamp = datetime.fromisoformat(timestamp_str)
         formatted_date = timestamp.strftime("%d-%B-%y")
         return f"{formatted_date}"
-
-    def send_notifications(self, request, queryset):
-        if "apply" in request.POST:
-            title = request.POST["title"]
-            description = request.POST["description"]
-            print(title)
-            print(description)
-            return HttpResponseRedirect(request.get_full_path())
-        else:
-            form = NotificationForm()
-        return render(
-            request, "admin/send_notification.html", {"users": queryset, "form": form}
-        )
 
 
 admin.site.register(User, UserAdmin)

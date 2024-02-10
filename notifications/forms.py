@@ -1,4 +1,6 @@
 from django import forms
+from ckeditor.widgets import CKEditorWidget
+from ckeditor.fields import RichTextFormField
 
 
 class NotificationForm(forms.Form):
@@ -6,7 +8,5 @@ class NotificationForm(forms.Form):
     title = forms.CharField(
         max_length=100,
     )
-    description = forms.CharField(
-        widget=forms.Textarea,
-        help_text="Enter the notification message here.",
-    )
+    description = forms.CharField()
+    content = RichTextFormField()

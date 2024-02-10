@@ -37,6 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     subscriptionCode = models.CharField(
         max_length=256, verbose_name=_("Subscription Code"), default="", blank=True
     )
+    notification_id = models.CharField(max_length=256, blank=True, null=True)
     is_staff = models.BooleanField(default=False)
     email_token = models.CharField(blank=True, null=True, max_length=250)
     is_superuser = models.BooleanField(default=False)
