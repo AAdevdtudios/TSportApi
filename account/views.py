@@ -53,7 +53,6 @@ class VerifyOtp(GenericAPIView):
             return Response(serializer.error_messages, status=400)
 
         info = serializer.data
-        # print(info)
         valid = validate(
             otp=info["otp"],
             email=info["email"],
@@ -73,7 +72,6 @@ class RegisterUserView(GenericAPIView):
             serializer.save()
             user = serializer.data
             if serializer.validated_data["isWebsite"]:
-                print("Got here first")
                 data = {"email": user["email"]}
                 send_verification = SendVerifyToken(
                     data=data, context={"request": request}
@@ -81,7 +79,6 @@ class RegisterUserView(GenericAPIView):
                 send_verification.is_valid(raise_exception=True)
             else:
                 # This would be sent if it is mobile
-                print("Diamond")
                 send_otp(user["email"])
 
             first_name = user["first_name"]
@@ -146,7 +143,6 @@ class LoginUser(GenericAPIView):
             data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
-        # print(serializer.data)
         return Response(serializer.data, status=serializer.data["status_code"])
 
 

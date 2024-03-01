@@ -144,7 +144,6 @@ class SendVerifyToken(serializers.Serializer):
                 "url": absLink,
             }
             send_verification_email(email=user.email, data=data)
-            print(absLink)
 
             return super().validate(attrs)
         else:
@@ -170,7 +169,6 @@ class PasswordResetRequest(serializers.Serializer):
             # )
             # absLink = f"http://{site_domain}{retrieve_lik}"
             absLink = f"{settings.WEBSITEURL}/password-reset/{uid64}/{token}"
-            print(absLink)
             send_verification_email(
                 email=email,
                 subject="Password Reset",

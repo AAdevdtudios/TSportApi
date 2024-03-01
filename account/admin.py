@@ -1,16 +1,9 @@
 from django.contrib import admin
-from django.http.request import HttpRequest
-from django.template.response import TemplateResponse
-from django.urls.resolvers import URLPattern
 from .models import User, OneTimePassword
-from django.shortcuts import render, get_object_or_404
-from notifications.forms import NotificationForm
+from django.shortcuts import get_object_or_404
 from notifications.models import Notifications
 from datetime import datetime
 from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.urls import path
-from django.contrib.admin import helpers
 from logics.utils import send_notification, send_email
 
 # Register your models here.
@@ -33,15 +26,21 @@ class UserAdmin(admin.ModelAdmin):
     # change_list_template = "admin/user_details.html"
     def send_not(self, request, queryset):
         notification = get_object_or_404(Notifications, pk=request.POST["notification"])
-        emails = [
-            send_email(
-                user.email, notification.title, f"<html>{notification.content}</html>"
-            )
-            for user in queryset
-        ]
+        # [
+        #     send_email(
+        #         user.email, notification.title, f"<html>{notification.content}</html>"
+        #     )
+        #     for user in queryset
+        # ]
         notification_id = [
             user.notification_id for user in queryset if user.notification_id
         ]
+
+        send_notification(
+            "fQlJFJoBQCOizN9D8IB2Rc:APA91bHI_FeYl3ghhUBzjVNOXQ9SYII3UhAI-ggGUf0zA6PiHOIsqrpkdwDqV5HlQIdYQotLI3wUDL3ATZHBhHmIYTXwhr1xZSbTJN7hnIL83J-3rCHMoBul6Z6raROw2lXfdMNYXxbN",
+            "Message",
+            "content",
+        )
 
         return HttpResponseRedirect("../user/")
 

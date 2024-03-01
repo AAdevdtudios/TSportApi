@@ -33,14 +33,12 @@ def send_verification_email(
 ):
     html_content = render_to_string(render, data)
     send_email(email=email, subject=subject, html=html_content)
-    print(html_content)
 
 
 def send_otp(email: str):
     totp = pyotp.TOTP(pyotp.random_base32(), interval=1800)
     otp = totp.now()
     valid_date = datetime.now() + timedelta(minutes=30)
-    print(f"{otp} + {valid_date}")
 
     try:
         user = User.objects.get(email=email)
@@ -64,7 +62,6 @@ def send_otp(email: str):
         #     "html": f"<strong>Your {otp} is</strong>",
         # }
         # email = resend.Emails.send(params)
-        print(get_otp.code)
 
         return {
             "message": "OTP Sent to email",

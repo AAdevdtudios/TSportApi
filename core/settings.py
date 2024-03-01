@@ -14,6 +14,8 @@ import os
 import environ
 from pathlib import Path
 from datetime import timedelta
+import firebase_admin
+from firebase_admin import credentials
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -174,6 +176,7 @@ STATIC_URL = "static/"
 STATIC_ROOT = "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -185,6 +188,21 @@ SOCIAL_AUTH_PASSWORD = env("SOCIAL_AUTH_PASSWORD")
 PAYSTACKSCKEY = env("PAYSTACKSCKEY")
 PAYSTACKPKKEY = env("PAYSTACKPKKEY")
 WEBSITEURL = env("WEBSITEURL")
-
 # Resend Key
-RESEND_KEY = env("RESEND_KEY")
+RESEND_KEY = env("RESENDKEY")
+API_FCM = env("API_FCM")
+# Google
+SCOPES = ["https://www.googleapis.com/auth/firebase.messaging"]
+INFOS = {
+    "type": env("TYPE"),
+    "project_id": env("PROJECT_ID"),
+    "private_key_id": env("PRIVATE_KEY_ID"),
+    "private_key": env("PRIVATE_KEY").replace("\\n", "\n"),
+    "client_email": env("CLIENT_EMAIL"),
+    "client_id": env("CLIENT_ID"),
+    "auth_uri": env("AUTH_URI"),
+    "token_uri": env("TOKEN_URI"),
+    "auth_provider_x509_cert_url": env("AUTH_PROVIDER"),
+    "client_x509_cert_url": env("CLIENT_CERT"),
+    "universe_domain": env("UNIVERSE_DOMAIN"),
+}

@@ -48,7 +48,6 @@ def SubscribeUser(email: str, planName: str):
 # invoice.create invoice.payment_failed invoice.update subscription.create subscription.disable subscription.not_renew charge.success
 def EventActions(event, data):
     if event == "subscription.create":
-        print(data)
         _subscriptionService(data=data)
         return "Subscription create"
     if event == "subscription.disable":
@@ -58,16 +57,13 @@ def EventActions(event, data):
         _onRenew(data)
         return event
     if event == "invoice.payment_failed":
-        print(data)
         return event
     if event == "invoice.update":
-        print(data)
         return event
     if event == "subscription.not_renew":
         _notRenew(data)
         return event
     if event == "charge.success":
-        print(data)
         return event
     return "Not created"
 
@@ -143,5 +139,4 @@ def check_date(provided_date_str: str, sub_code: str) -> bool:
     current_date = datetime.now()
     provided_date = datetime.fromisoformat(provided_date_str.replace("Z", "+00:00"))
     data = paystack.subscription.fetch(sub_code)
-    print(data["data"]["next_payment_date"])
     return current_date.date() == provided_date.date()

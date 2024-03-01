@@ -38,7 +38,6 @@ class CreateNotification(CreateView, PermissionRequiredMixin):
             Notifications.objects.create(
                 user=user, title=title, description=description, content=content
             )
-            print(user)
 
         return super().form_valid(form)
 
